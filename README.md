@@ -1,8 +1,19 @@
-# Welcome to your Expo app 👋
+# scruffy
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+![Logo](./logo.webp)
+
+This is MY notetaking app where it will be easy to add notes on the go and set reminders on my phone.
+
+It should support:
+- A foreground widget that I can get to easily (i.e notification drawer)
+- I can input some text to that widget
+- vim-like shorthand for classifying the note
+- Put the note in Obsidian at a location as per the classification
+- Put an event in Google Calendar if it is remindable
 
 ## Get started
+
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 1. Install dependencies
 
