@@ -25,6 +25,11 @@
       "userInterfaceStyle": "automatic"
     },
     "web": {
+      "build": {
+        "babel": {
+          "include": [ "@ui-kitten/components" ]
+        }
+      },
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
