@@ -13,15 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "dog.scurvy.scruffy"
+      "bundleIdentifier": "dog.scurvy.scruffy",
+      "supportsTablet": true
     },
     "android": {
+      "package": "dog.scurvy.scruffy",
+      "permissions": ["android.permission.FOREGROUND_SERVICE_DATA_SYNC"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "dog.scurvy.scruffy",
       "userInterfaceStyle": "automatic"
     },
     "web": {
@@ -35,6 +36,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./configPlugins/withForegroundService",
       "@notifee/react-native",
       "expo-router"
     ],
