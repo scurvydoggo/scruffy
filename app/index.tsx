@@ -1,112 +1,80 @@
+import { useEffect } from 'react';
 import notifee from '@notifee/react-native';
 import { AndroidImportance, AndroidVisibility, EventType } from '@notifee/react-native';
 import { Layout, Text } from '@ui-kitten/components';
 
 const HomeScreen = () => (
   <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    <Text category='h1'>HOME</Text>
+    <Text category='h1'>🏹️</Text>
   </Layout>
 );
 
+enum Task {
+  DO = 'Do',
+  BUY = 'Buy',
+  SCHEDULE = 'Schedule'
+}
+
+async function showNotification(channelId: string): Promise<string> {
+  return await notifee.displayNotification({
+    id: "main",
+    body: '🏹️️',
+    android: {
+      channelId,
+      ////asForegroundService: true,
+      ongoing: true,
+      importance: AndroidImportance.LOW,
+      visibility: AndroidVisibility.PUBLIC,
+      actions: [
+        { title: 'Do this', pressAction: { id: Task.DO }, input: true, },
+        { title: 'Buy this', pressAction: { id: Task.BUY }, input: true, },
+        { title: 'Lock in', pressAction: { id: Task.SCHEDULE }, input: true, }
+      ],
+    },
+  });
+}
+
+// TODO: Listen for events to recreate this notification if it gets swiped away
 async function setupNotificationWidget(): Promise<void> {
-  notifee.registerForegroundService((n) => {
-    return new Promise(() => {
-      // Long running task...
-      console.log("Foreground service running");
-    });
+  notifee.registerForegroundService((notification) => {
+    return Promise.resolve(console.log('Registered FGS notification'));
   });
 
   const channelId = await notifee.createChannel({
-    id: 'input',
-    name: 'Task Input',
-    importance: AndroidImportance.LOW,
-    visibility: AndroidVisibility.PUBLIC,
+    id: 'tasks',
+    name: 'Tasks',
     vibration: false,
     lights: false,
   });
-
-  const groupId = '333';
-
-  await notifee.displayNotification({
-    title: 'Appointment',
-    android: {
-      channelId,
-      asForegroundService: true,
-      groupSummary: true,
-      groupId: groupId,
-      color: '#00FFD6',
-      colorized: true,
-      importance: AndroidImportance.LOW,
-      visibility: AndroidVisibility.PUBLIC,
-    },
-  });
-
-  // TODO: https://notifee.app/react-native/docs/android/interaction
-  // You may also notice the example provides a "Send" icon on the right hand
-  // side of the input area. When the user has entered their free text and
-  // presses this icon, it will change to a "pending" state. A pending state
-  // indicates to the user something is happening with their action. It is your
-  // responsibility to update the notification once the event has been handled
-  // (e.g. removing it or updating the text). When the notification has been
-  // updated, the pending state will be removed automatically.
-
-  await notifee.displayNotification({
-    title: 'Appointment',
-    android: {
-      channelId,
-      groupId: groupId,
-      sortKey: '1',
-      actions: [ {
-        title: 'Add', // TODO: 'Send' icon
-        pressAction: { id: 'ADD_APPT' },
-        input: true,
-      } ],
-    },
-  });
-
-  await notifee.displayNotification({
-    title: 'Buy',
-    android: {
-      channelId,
-      groupId: groupId,
-      sortKey: '2',
-      actions: [ {
-        title: 'Add', // TODO: 'Send' icon
-        pressAction: { id: 'ADD_BUY' },
-        input: true,
-      } ],
-    },
-  });
-
-  // TODO: Rate it as 'Must/Should/Could Today'
-  await notifee.displayNotification({
-    title: 'Todo List',
-    android: {
-      channelId,
-      groupId: groupId,
-      sortKey: '3',
-      actions: [ {
-        title: 'Add', // TODO: 'Send' icon
-        pressAction: { id: 'ADD_TODO' },
-        input: true,
-      } ],
-    },
-  });
+  await showNotification(channelId);
 
   notifee.onBackgroundEvent(async ({ type, detail }) => {
-    if (type === EventType.ACTION_PRESS && detail.pressAction?.id) {
-      console.log('User pressed an action with the id: ', detail.pressAction.id);
-       
-      // Input actions enter a pending state once sent, therefore we must cancel
-      // or update the notification once the action has completed
-      //await updateChat(detail.notification.data.chatId, detail.input);
-      //await notifee.cancelNotification(detail.notification.id);
+    if (type === EventType.ACTION_PRESS && detail.pressAction) {
+      const id = detail.pressAction.id;
+      switch (id) {
+        case Task.DO:
+          await showNotification(channelId);
+          // TODO: Add to list
+          break;
+        case Task.BUY:
+          await showNotification(channelId);
+          // TODO: Add to list
+          break;
+        case Task.SCHEDULE:
+          await showNotification(channelId);
+          // TODO: Add to list
+          break;
+        default:
+          throw new Error(`Unsupported task type: ${id}`);
+      }
     }
   });
 }
 
 export default function Index() {
-  setupNotificationWidget();
+  useEffect(() => {
+    setupNotificationWidget()
+  }, []);
 
   return (
     <HomeScreen />
